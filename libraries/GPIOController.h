@@ -5,5 +5,6 @@
 #define INPUT 0
 
 int pinMode(char *pin, int mode);
+int digitalWrite(char *path, int isON);
 
 #endif
