@@ -28,3 +28,26 @@ int pinMode(char *path, int isIN){
     close(fd);
     return status;
 }
+
+int digitalWrite(char *path, int isON){
+    int len = -1, fd = -1;
+    char value[50] = "";
+    strcat(value, path);
+    strcat(value, "value");
+    
+    fd = open(value, O_WRONLY); 
+    if (fd == -1) return EXIT_FAILURE;
+    if (isON) {
+        len = write(fd, "1", 1);
+    } else {
+        len = write(fd, "0", 1);
+    }
+
+    if(len == -1){       
+         perror("write");
+         close(fd);
+         return EXIT_FAILURE;        
+     }
+     close(fd);
+     return EXIT_SUCCESS;
+}
