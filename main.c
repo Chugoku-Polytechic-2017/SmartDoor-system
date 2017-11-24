@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "GPIOController.c"
+#include "libraries/GPIOController.h"
 
 void main(void) {
     char *path = "/sys/class/gpio/CON9_11/";
