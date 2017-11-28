@@ -15,7 +15,10 @@ int pinMode(char *path, int isIN){
     strcat(edge, "edge");
 
     fd = open(direction, O_WRONLY);
-    if (fd == -1) return EXIT_FAILURE;
+    if (fd == -1) {
+        perror("open");
+        return EXIT_FAILURE;
+    }
     if (isIN) {
         status = write(fd, "in", 2);
     } else {
