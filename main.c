@@ -117,52 +117,7 @@ int digitalWrite(char *path, int isON){
 
 //int get_dip_status(char *path);
 
-int pinMode(char *path, int isIN){
-    int fd, status;
-    char direction[50] = "";
-    char edge[40] = "";
-    strcat(direction, path);
-    strcat(edge, path);
-    strcat(direction, "direction");
-    strcat(edge, "edge");
 
-    fd = open(direction, O_WRONLY);
-    if (fd == -1) return EXIT_FAILURE;
-    if (isIN) {
-        status = write(fd, "in", 2);
-    } else {
-        status = write(fd, "out", 3);
-    }
-    close(fd);
-    fd = open(edge, O_WRONLY);
-    if (fd == -1) return EXIT_FAILURE;
-    status = write(fd, "none", 1);
-    close(fd);
-    return status;
-}
-
-int digitalWrite(char *path, int isON){
-    int len = -1, fd = -1;
-    char value[50] = "";
-    strcat(value, path);
-    strcat(value, "value");
-    
-    fd = open(value, O_WRONLY); 
-    if (fd == -1) return EXIT_FAILURE;
-    if (isON) {
-        len = write(fd, "1", 1);
-    } else {
-        len = write(fd, "0", 1);
-    }
-
-    if(len == -1){       
-         perror("write");
-         close(fd);
-         return EXIT_FAILURE;        
-     }
-     close(fd);
-     return EXIT_SUCCESS;
-}
 
 int main(void){
     int fd_red1 = -1, fd_red2 = -1, fd_green1 = -1, fd_green2 = -1, loop, status_code = 0;
