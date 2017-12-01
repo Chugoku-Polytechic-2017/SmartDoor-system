@@ -1,8 +1,4 @@
-/*
-#include <string.h>
-#include <fcntl.h>*/
 #include "GPIOController.h"
-
 
 #include <stdio.h>
 #include <stdlib.h>
