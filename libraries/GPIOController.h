@@ -9,7 +9,6 @@
 #define INPUT 1
 #define HIGH 1
 #define LOW 0
-#define PORTS 8
 #define COM9_11 "/sys/class/gpio/CON9_11/";
 #define COM9_12 "/sys/class/gpio/CON9_12/";
 #define COM9_13 "/sys/class/gpio/CON9_13/";
