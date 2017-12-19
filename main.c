@@ -9,7 +9,7 @@
 
 int main(void){
     int fd_red1 = -1, fd_red2 = -1, fd_green1 = -1, fd_green2 = -1, loop, status_code = 0;
-    char *path[PORTS];
+    char *path[1];
     int status;
     
     path[0] = COM9_11;
