@@ -54,3 +54,24 @@ int digitalWrite(char *path, int isON){
      close(fd);
      return EXIT_SUCCESS;
 }
+
+int digitalRead(char *path){
+    int status = 0, fd = -1;
+    char value[50] = "";
+    char buf[256];
+
+    strcat(value, path);
+    strcat(value, "value");
+    
+    fd = open(value, O_RDONLY); 
+    status= read(fd, buf, 256);
+
+    if(status == -1){       
+         perror("write");
+         close(fd);
+         return EXIT_FAILURE;        
+     }
+     status = strtol(buf, NULL, 0);
+     close(fd);
+     return status;
+}
