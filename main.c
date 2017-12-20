@@ -20,11 +20,10 @@ int main(void){
 
     while (1) {
         status = digitalRead(path[1]);
-        if(status == 1)
-            printf("OFF\r\n");
+        if(status == 1)                         //負論理
+            digitalWrite(path[0],LOW);
         else
-            printf("ON\r\n");
-        sleep(1);
+            digitalWrite(path[0],HIGH);
     }
     return status_code;
 } 
