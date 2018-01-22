@@ -13,6 +13,15 @@ def command_detect(args, CF):
     else:
         print(result)
 
+def command_identify(args, CF):
+    face_ids = []
+    face_ids.append(args.face_id)
+    result = CF.face.identify(face_ids, args.group_id)
+    if args.debug:
+        print(json.dumps(result))
+    else:
+        print(result)
+
 if __name__ == '__main__':
     #set up FaceAPI SDK
     KEY = os.getenv("FACEAPIKEY")
@@ -35,6 +44,16 @@ if __name__ == '__main__':
         default=False, \
         help='debug mode if this flag is set print json. (default: False)')
     face_detect.set_defaults(handler=command_detect)
+
+    # create a parser of face_identify command
+    face_identify = subparsers.add_parser('identify', help='see `identify -h`')
+    face_identify.add_argument('group_id', help = 'please set a person group_id.')
+    face_identify.add_argument('face_id', help = 'Please set face Id got from `face detect command`.')
+    face_identify.add_argument('-d', '--debug', \
+        action='store_true', \
+        default=False, \
+        help='debug mode if this flag is set print json. (default: False)')
+    face_identify.set_defaults(handler=command_identify)
 
     args = parser.parse_args()
     if hasattr(args, 'handler'):
