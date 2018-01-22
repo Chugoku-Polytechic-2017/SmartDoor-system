@@ -36,7 +36,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="this is face certification cli.")
     subparsers = parser.add_subparsers()
 
-    # create a parser of face_group command 
+    # create a parser of face_detect command 
     face_detect = subparsers.add_parser('detect', help='see `detect -h`')
     face_detect.add_argument('image', help = 'Please set a picture with a face.')
     face_detect.add_argument('-d', '--debug', \
