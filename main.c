@@ -5,25 +5,33 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <poll.h>
 #include "libraries/GPIOController.h"
 
 int main(void){
-    int fd_red1 = -1, fd_red2 = -1, fd_green1 = -1, fd_green2 = -1, loop, status_code = 0;
-    char *path[2];
+//    char *path[2];
     int status;
     
-    path[0] = COM9_11;
-    path[1] = COM9_13;
+//    path[0] = COM9_11;
+//    path[1] = COM9_13;
     
-    pinMode(path[0], OUTPUT);
-    pinMode(path[1], INPUT);
+    pinMode(11, OUTPUT);
+    pinMode(13, INPUT);
+
+//    enum atgpioPin pin;
+//    pin = COM9_11;
 
     while (1) {
-        status = digitalRead(path[1]);
-        if(status == 1)                         //負論理
-            digitalWrite(path[0],LOW);
-        else
-            digitalWrite(path[0],HIGH);
+        status = digitalRead(11);
+        if(status == 0) {                        //負論理
+            digitalWrite(11,LOW);
+            printf("%d\r\n",status);
+            sleep(1);
+        }else{
+            digitalWrite(11,HIGH); 
+            printf("%d\r\n",status);
+            sleep(1);        
+        }
     }
-    return status_code;
+    return status;
 } 
