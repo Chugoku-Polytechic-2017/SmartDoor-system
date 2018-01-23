@@ -8,10 +8,20 @@
 #include <limits.h>
 
 
-int pinMode(char *path, int isIN){
+void _createPath(int pin,char *result){
+    char path[25] = "/sys/class/gpio/CON9_";
+    char *pin_char;
+    itoa(pin,pin_char,10);
+    strcat(path,pin_char);
+    result = path;
+}
+
+int pinMode(int pin, int isIN){
     int fd, status;
+    char *path;
     char direction[50] = "";
     char edge[40] = "";
+    _createPath(pin,path);
     strcat(direction, path);
     strcat(edge, path);
     strcat(direction, "direction");
@@ -32,9 +42,11 @@ int pinMode(char *path, int isIN){
     return status;
 }
 
-int digitalWrite(char *path, int isON){
+int digitalWrite(int pin, int isON){
     int len = -1, fd = -1;
+    char *path;
     char value[50] = "";
+    _createPath(pin,path);
     strcat(value, path);
     strcat(value, "value");
     
@@ -55,10 +67,12 @@ int digitalWrite(char *path, int isON){
      return EXIT_SUCCESS;
 }
 
-int digitalRead(char *path){
+int digitalRead(int pin){
     int status = 0, fd = -1;
+    char *path;
     char value[50] = "";
     char buf[256];
+    _createPath(pin,path);
 
     strcat(value, path);
     strcat(value, "value");
@@ -75,3 +89,5 @@ int digitalRead(char *path){
      close(fd);
      return status;
 }
+
+//int add_gpio_interrupt()
