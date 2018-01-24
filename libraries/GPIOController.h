@@ -1,9 +1,15 @@
+#ifndef __GPIO_CONTROLLER_H__
+#define __GPIO_CONTROLLER_H__
+
+#include "atgpio.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <glib.h>
 
 #define OUTPUT 0
 #define INPUT 1
@@ -18,6 +24,8 @@
 #define COM9_17 "/sys/class/gpio/CON9_17/"
 #define COM9_18 "/sys/class/gpio/CON9_18/"
 
-extern int pinMode(int pin, int isIN);
-extern int digitalWrite(int pin, int isON);
-extern int digitalRead(int pin);
+int pinMode(int pin, int isIN);
+int digitalWrite(int pin, int isON);
+int digitalRead(int pin);
+
+#endif /* __GPIO_CONTROLLER_H__ */
