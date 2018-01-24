@@ -1,13 +1,5 @@
 #include "GPIOController.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <limits.h>
-
-
 void _createPath(int pin,char *result){
     char path[25] = "/sys/class/gpio/CON9_";
     char *pin_char;
