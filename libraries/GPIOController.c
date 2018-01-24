@@ -10,7 +10,7 @@ void _createPath(int pin,char *result){
 
 int pinMode(int pin, int isIN){
     int fd, status;
-    char *path;
+    char *path = "";
     char direction[50] = "";
     char edge[40] = "";
     _createPath(pin,path);
@@ -36,7 +36,7 @@ int pinMode(int pin, int isIN){
 
 int digitalWrite(int pin, int isON){
     int len = -1, fd = -1;
-    char *path;
+    char *path = "";
     char value[50] = "";
     _createPath(pin,path);
     strcat(value, path);
@@ -61,7 +61,7 @@ int digitalWrite(int pin, int isON){
 
 int digitalRead(int pin){
     int status = 0, fd = -1;
-    char *path;
+    char *path = "";
     char value[50] = "";
     char buf[256];
     _createPath(pin,path);
