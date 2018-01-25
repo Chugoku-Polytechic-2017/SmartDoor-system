@@ -2,3 +2,4 @@
 *.arm
 *.h.gch
 *.pyc
+*.json
