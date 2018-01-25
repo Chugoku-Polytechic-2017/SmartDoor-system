@@ -14,9 +14,7 @@ def command_detect(args, CF):
         print(result)
 
 def command_identify(args, CF):
-    face_ids = []
-    face_ids.append(args.face_id)
-    result = CF.face.identify(face_ids, args.group_id)
+    result = CF.face.identify(args.face_ids, args.group_id)
     if args.debug:
         print(json.dumps(result))
     else:
@@ -48,7 +46,7 @@ if __name__ == '__main__':
     # create a parser of face_identify command
     face_identify = subparsers.add_parser('identify', help='see `identify -h`')
     face_identify.add_argument('group_id', help = 'please set a person group_id.')
-    face_identify.add_argument('face_id', help = 'Please set face Id got from `face detect command`.')
+    face_identify.add_argument('face_ids',nargs='*', help = 'Please set face Id got from `face detect command`.')
     face_identify.add_argument('-d', '--debug', \
         action='store_true', \
         default=False, \
