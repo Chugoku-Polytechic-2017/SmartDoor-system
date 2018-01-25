@@ -1,3 +1,4 @@
 *.o
 *.arm
 *.h.gch
+*.pyc
