@@ -1,30 +1,30 @@
-
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <limits.h>
 #include "libraries/GPIOController.h"
 
-int main(void){
-    int fd_red1 = -1, fd_red2 = -1, fd_green1 = -1, fd_green2 = -1, loop, status_code = 0;
-    char *path[1];
-    int status;
-    
-    path[0] = COM9_11;
-    
-    pinMode(path[0], OUTPUT);
+static gboolean on_push(GIOChannel *ch, gpointer d) {
+    int *flag;
+    flag = d;
+    printf("on_push \r\n");
+    if (*flag == 0)
+        digitalWrite(11, HIGH);
+    else
+        digitalWrite(11, LOW);
 
-    while (1) {
-        digitalWrite(path[0], LOW);
-        status = digitalRead(path[0]);
-        printf("%d\r\n",status);
-        sleep(3);
-        digitalWrite(path[0], HIGH);
-        status = digitalRead(path[0]);
-        printf("%d\r\n",status);
-        sleep(3);
-    }
-    return status_code;
+    *flag = ~*flag;
+
+    g_io_channel_read_to_end(ch, NULL, NULL, NULL);
+    return TRUE;
+}
+
+int main(void){
+    int status, flag = 0;
+    GMainLoop *loop;
+
+    loop = g_main_loop_new(NULL, FALSE);
+    status = pinMode(11, OUTPUT);
+    at_gpio_add(13,  AT_GPIO_EDGE_FALLING, on_push, &flag,  NULL);
+    g_main_loop_run(loop);
+    g_main_loop_unref(loop);
+
+    return status;
 } 
