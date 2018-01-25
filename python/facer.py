@@ -29,8 +29,9 @@ def command_identify(args, CF):
 
     if args.debug:
         print(json.dumps(result))
-    else:
-        print(result)
+    candidates = map(lambda face: face['candidates'], result)
+    if len(filter(lambda result: len(result) != 0, candidates)) == 0:
+        sys.exit(-1)
 
 if __name__ == '__main__':
     #set up FaceAPI SDK
