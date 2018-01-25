@@ -20,7 +20,13 @@ def command_detect(args, CF):
 
 
 def command_identify(args, CF):
-    result = CF.face.identify(args.face_ids, args.group_id)
+    if args.json:
+        f = open('request.json', 'r')
+        face_ids = json.load(f)
+        result = CF.face.identify(face_ids, args.group_id)
+    else:
+        result = CF.face.identify(args.face_ids, args.group_id)
+
     if args.debug:
         print(json.dumps(result))
     else:
@@ -53,6 +59,10 @@ if __name__ == '__main__':
     face_identify = subparsers.add_parser('identify', help='see `identify -h`')
     face_identify.add_argument('group_id', help = 'please set a person group_id.')
     face_identify.add_argument('face_ids',nargs='*', help = 'Please set face Id got from `face detect command`.')
+    face_identify.add_argument('-j', '--json', \
+        action='store_true', \
+        default=False, \
+        help='load json file. (default: False)')
     face_identify.add_argument('-d', '--debug', \
         action='store_true', \
         default=False, \
