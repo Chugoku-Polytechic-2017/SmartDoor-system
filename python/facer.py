@@ -10,8 +10,14 @@ def command_detect(args, CF):
     result = CF.face.detect(args.image)
     if args.debug:
         print(json.dumps(result))
-    else:
-        print(result)
+    
+    if len(result) == 0:
+        sys.exit(-1)
+    face_ids = map(lambda dic: dic['faceId'], result)
+    request = str(json.dumps(face_ids))
+    f = open('request.json', 'w')
+    f.write(request)
+
 
 def command_identify(args, CF):
     result = CF.face.identify(args.face_ids, args.group_id)
