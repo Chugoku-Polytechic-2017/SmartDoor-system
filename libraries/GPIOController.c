@@ -2,14 +2,15 @@
 
 int pinMode(int pin, int isIN){
     int fd, status;
-    char *path = "";
-    char direction[50] = "";
-    char edge[40] = "";
-    _createPath(pin,path);
-    strcat(direction, path);
-    strcat(edge, path);
-    strcat(direction, "direction");
-    strcat(edge, "edge");
+    GString *s;
+    s = g_string_new(NULL);
+    char *direction = "";
+    char *edge = "";
+
+    g_string_printf(s, AT_GPIO_PATH_DIRECTION, (guint)pin);
+    direction = s->str;
+    g_string_printf(s, AT_GPIO_PATH_EDGE, (guint)pin);
+    edge = s->str;
 
     fd = open(direction, O_WRONLY);
     if (fd == -1) return EXIT_FAILURE;
@@ -28,12 +29,11 @@ int pinMode(int pin, int isIN){
 
 int digitalWrite(int pin, int isON){
     int len = -1, fd = -1;
-    char *path = "";
-    char value[50] = "";
-    _createPath(pin,path);
-    strcat(value, path);
-    strcat(value, "value");
-    
+    GString *s;
+    char *value = "";
+    s = g_string_new(NULL);
+    g_string_printf(s, AT_GPIO_PATH_VALUE, (guint)pin);
+    value = s->str;
     fd = open(value, O_WRONLY); 
     if (fd == -1) return EXIT_FAILURE;
     if (isON) {
@@ -53,13 +53,12 @@ int digitalWrite(int pin, int isON){
 
 int digitalRead(int pin){
     int status = 0, fd = -1;
-    char *path = "";
-    char value[50] = "";
+    GString *s;
+    char *value = "";
     char buf[256];
-    _createPath(pin,path);
-
-    strcat(value, path);
-    strcat(value, "value");
+    s = g_string_new(NULL);
+    g_string_printf(s, AT_GPIO_PATH_VALUE, (guint)pin);
+    value = s->str;
     
     fd = open(value, O_RDONLY); 
     status= read(fd, buf, 256);
