@@ -22,7 +22,7 @@ int pinMode(int pin, int isIN){
     close(fd);
     fd = open(edge, O_WRONLY);
     if (fd == -1) return EXIT_FAILURE;
-    status = write(fd, "none", 1);
+    status = write(fd, "none", 4);
     close(fd);
     return status;
 }
