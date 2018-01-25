@@ -1,21 +1,16 @@
 #include "GPIOController.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <limits.h>
-
-
-int pinMode(char *path, int isIN){
+int pinMode(int pin, int isIN){
     int fd, status;
-    char direction[50] = "";
-    char edge[40] = "";
-    strcat(direction, path);
-    strcat(edge, path);
-    strcat(direction, "direction");
-    strcat(edge, "edge");
+    GString *s;
+    s = g_string_new(NULL);
+    char *direction = "";
+    char *edge = "";
+
+    g_string_printf(s, AT_GPIO_PATH_DIRECTION, (guint)pin);
+    direction = s->str;
+    g_string_printf(s, AT_GPIO_PATH_EDGE, (guint)pin);
+    edge = s->str;
 
     fd = open(direction, O_WRONLY);
     if (fd == -1) return EXIT_FAILURE;
@@ -27,17 +22,18 @@ int pinMode(char *path, int isIN){
     close(fd);
     fd = open(edge, O_WRONLY);
     if (fd == -1) return EXIT_FAILURE;
-    status = write(fd, "none", 1);
+    status = write(fd, "none", 4);
     close(fd);
     return status;
 }
 
-int digitalWrite(char *path, int isON){
+int digitalWrite(int pin, int isON){
     int len = -1, fd = -1;
-    char value[50] = "";
-    strcat(value, path);
-    strcat(value, "value");
-    
+    GString *s;
+    char *value = "";
+    s = g_string_new(NULL);
+    g_string_printf(s, AT_GPIO_PATH_VALUE, (guint)pin);
+    value = s->str;
     fd = open(value, O_WRONLY); 
     if (fd == -1) return EXIT_FAILURE;
     if (isON) {
@@ -55,13 +51,14 @@ int digitalWrite(char *path, int isON){
      return EXIT_SUCCESS;
 }
 
-int digitalRead(char *path){
+int digitalRead(int pin){
     int status = 0, fd = -1;
-    char value[50] = "";
+    GString *s;
+    char *value = "";
     char buf[256];
-
-    strcat(value, path);
-    strcat(value, "value");
+    s = g_string_new(NULL);
+    g_string_printf(s, AT_GPIO_PATH_VALUE, (guint)pin);
+    value = s->str;
     
     fd = open(value, O_RDONLY); 
     status= read(fd, buf, 256);
@@ -75,3 +72,5 @@ int digitalRead(char *path){
      close(fd);
      return status;
 }
+
+//int add_gpio_interrupt()
