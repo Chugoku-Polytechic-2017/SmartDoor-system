@@ -1,5 +1,5 @@
-main: main.o  GPIOController.o  
-	arm-linux-gnueabi-gcc -Wall `pkg-config --libs glib-2.0` -o main *.o 
+main.arm: main.o  GPIOController.o  
+	arm-linux-gnueabi-gcc -Wall `pkg-config --libs glib-2.0` -o main.arm *.o 
 
 GPIOController.o: libraries/GPIOController.c libraries/atgpio.c
 	arm-linux-gnueabi-gcc -Wall `pkg-config --cflags glib-2.0`  -c libraries/GPIOController.c libraries/atgpio.c 
