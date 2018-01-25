@@ -1,13 +1,5 @@
 #include "GPIOController.h"
 
-void _createPath(int pin,char *result){
-    char path[25] = "/sys/class/gpio/CON9_";
-    char *pin_char;
-    itoa(pin,pin_char,10);
-    strcat(path,pin_char);
-    result = path;
-}
-
 int pinMode(int pin, int isIN){
     int fd, status;
     char *path = "";
