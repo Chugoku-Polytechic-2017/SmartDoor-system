@@ -9,27 +9,18 @@
 #include "libraries/GPIOController.h"
 
 int main(void){
-//    char *path[2];
     int status;
-    
-//    path[0] = COM9_11;
-//    path[1] = COM9_13;
-    
-    pinMode(11, OUTPUT);
-    pinMode(13, INPUT);
-
-//    enum atgpioPin pin;
-//    pin = COM9_11;
+    status = pinMode(11, OUTPUT);
+    status = pinMode(13, INPUT);
 
     while (1) {
-        status = digitalRead(11);
+        status = digitalRead(13);
+        printf("%d\r\n",status);
         if(status == 0) {                        //負論理
             digitalWrite(11,LOW);
-            printf("%d\r\n",status);
             sleep(1);
         }else{
             digitalWrite(11,HIGH); 
-            printf("%d\r\n",status);
             sleep(1);        
         }
     }
