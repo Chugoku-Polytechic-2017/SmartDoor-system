@@ -16,6 +16,12 @@ static gboolean on_push(GIOChannel *ch, gpointer d) {
     return TRUE;
 }
 
+gboolean callback(gpointer data)
+{
+    printf("timer intterupt\n");
+    return TRUE;
+}
+
 int main(void){
     int status, flag = 0;
     GMainLoop *loop;
