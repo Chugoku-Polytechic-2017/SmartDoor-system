@@ -2,17 +2,15 @@
 
 int pinMode(int pin, int isIN){
     int fd, status;
-    GString *s;
-    s = g_string_new(NULL);
-    char *direction = "";
-    char *edge = "";
+    GString *direction;
+    GString *edge;
+    direction = g_string_new(NULL);
+    edge = g_string_new(NULL);
 
-    g_string_printf(s, AT_GPIO_PATH_DIRECTION, (guint)pin);
-    direction = s->str;
-    g_string_printf(s, AT_GPIO_PATH_EDGE, (guint)pin);
-    edge = s->str;
+    g_string_printf(direction, AT_GPIO_PATH_DIRECTION, (guint)pin);
+    g_string_printf(edge, AT_GPIO_PATH_EDGE, (guint)pin);
 
-    fd = open(direction, O_WRONLY);
+    fd = open(direction->str, O_WRONLY);
     if (fd == -1) return EXIT_FAILURE;
     if (isIN) {
         status = write(fd, "in", 2);
@@ -20,7 +18,7 @@ int pinMode(int pin, int isIN){
         status = write(fd, "out", 3);
     }
     close(fd);
-    fd = open(edge, O_WRONLY);
+    fd = open(edge->str, O_WRONLY);
     if (fd == -1) return EXIT_FAILURE;
     status = write(fd, "none", 4);
     close(fd);
