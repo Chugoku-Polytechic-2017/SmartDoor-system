@@ -23,6 +23,7 @@ int main(void){
     loop = g_main_loop_new(NULL, FALSE);
     status = pinMode(11, OUTPUT);
     at_gpio_add(13,  AT_GPIO_EDGE_FALLING, on_push, &flag,  NULL);
+    g_timeout_add_seconds(1, callback, NULL);
     g_main_loop_run(loop);
     g_main_loop_unref(loop);
 
