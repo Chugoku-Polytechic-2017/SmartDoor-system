@@ -9,7 +9,6 @@ static gboolean on_push(GIOChannel *ch, gpointer d) {
         digitalWrite(11, HIGH);
     else
         digitalWrite(11, LOW);
-
     *flag = ~*flag;
 
     g_io_channel_read_to_end(ch, NULL, NULL, NULL);
@@ -25,6 +24,8 @@ gboolean callback(gpointer data)
 int main(void){
     int status, flag = 0;
     GMainLoop *loop;
+
+    status = caputure();
 
     loop = g_main_loop_new(NULL, FALSE);
     status = pinMode(11, OUTPUT);
