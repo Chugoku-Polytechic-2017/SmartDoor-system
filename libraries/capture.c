@@ -1,3 +1,5 @@
+#include "capture.h"
+
 #define Y1 YUYV[0]
 #define U  YUYV[1]
 #define Y2 YUYV[2]
