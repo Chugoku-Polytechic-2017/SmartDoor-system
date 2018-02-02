@@ -1,33 +1,16 @@
 #include "GPIOController.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <limits.h>
-
-
-void _createPath(int pin,char *result){
-    char path[25] = "/sys/class/gpio/CON9_";
-    char *pin_char;
-    itoa(pin,pin_char,10);
-    strcat(path,pin_char);
-    result = path;
-}
-
 int pinMode(int pin, int isIN){
     int fd, status;
-    char *path;
-    char direction[50] = "";
-    char edge[40] = "";
-    _createPath(pin,path);
-    strcat(direction, path);
-    strcat(edge, path);
-    strcat(direction, "direction");
-    strcat(edge, "edge");
+    GString *direction;
+    GString *edge;
+    direction = g_string_new(NULL);
+    edge = g_string_new(NULL);
 
-    fd = open(direction, O_WRONLY);
+    g_string_printf(direction, AT_GPIO_PATH_DIRECTION, (guint)pin);
+    g_string_printf(edge, AT_GPIO_PATH_EDGE, (guint)pin);
+
+    fd = open(direction->str, O_WRONLY);
     if (fd == -1) return EXIT_FAILURE;
     if (isIN) {
         status = write(fd, "in", 2);
@@ -35,21 +18,20 @@ int pinMode(int pin, int isIN){
         status = write(fd, "out", 3);
     }
     close(fd);
-    fd = open(edge, O_WRONLY);
+    fd = open(edge->str, O_WRONLY);
     if (fd == -1) return EXIT_FAILURE;
-    status = write(fd, "none", 1);
+    status = write(fd, "none", 4);
     close(fd);
     return status;
 }
 
 int digitalWrite(int pin, int isON){
     int len = -1, fd = -1;
-    char *path;
-    char value[50] = "";
-    _createPath(pin,path);
-    strcat(value, path);
-    strcat(value, "value");
-    
+    GString *s;
+    char *value = "";
+    s = g_string_new(NULL);
+    g_string_printf(s, AT_GPIO_PATH_VALUE, (guint)pin);
+    value = s->str;
     fd = open(value, O_WRONLY); 
     if (fd == -1) return EXIT_FAILURE;
     if (isON) {
@@ -69,13 +51,12 @@ int digitalWrite(int pin, int isON){
 
 int digitalRead(int pin){
     int status = 0, fd = -1;
-    char *path;
-    char value[50] = "";
+    GString *s;
+    char *value = "";
     char buf[256];
-    _createPath(pin,path);
-
-    strcat(value, path);
-    strcat(value, "value");
+    s = g_string_new(NULL);
+    g_string_printf(s, AT_GPIO_PATH_VALUE, (guint)pin);
+    value = s->str;
     
     fd = open(value, O_RDONLY); 
     status= read(fd, buf, 256);

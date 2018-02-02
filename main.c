@@ -1,37 +1,30 @@
-
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <poll.h>
 #include "libraries/GPIOController.h"
 
+static gboolean on_push(GIOChannel *ch, gpointer d) {
+    int *flag;
+    flag = d;
+    printf("on_push \r\n");
+    if (*flag == 0)
+        digitalWrite(11, HIGH);
+    else
+        digitalWrite(11, LOW);
+
+    *flag = ~*flag;
+
+    g_io_channel_read_to_end(ch, NULL, NULL, NULL);
+    return TRUE;
+}
+
 int main(void){
-//    char *path[2];
-    int status;
-    
-//    path[0] = COM9_11;
-//    path[1] = COM9_13;
-    
-    pinMode(11, OUTPUT);
-    pinMode(13, INPUT);
+    int status, flag = 0;
+    GMainLoop *loop;
 
-//    enum atgpioPin pin;
-//    pin = COM9_11;
+    loop = g_main_loop_new(NULL, FALSE);
+    status = pinMode(11, OUTPUT);
+    at_gpio_add(13,  AT_GPIO_EDGE_FALLING, on_push, &flag,  NULL);
+    g_main_loop_run(loop);
+    g_main_loop_unref(loop);
 
-    while (1) {
-        status = digitalRead(11);
-        if(status == 0) {                        //負論理
-            digitalWrite(11,LOW);
-            printf("%d\r\n",status);
-            sleep(1);
-        }else{
-            digitalWrite(11,HIGH); 
-            printf("%d\r\n",status);
-            sleep(1);        
-        }
-    }
     return status;
 } 
