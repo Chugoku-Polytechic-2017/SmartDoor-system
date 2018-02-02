@@ -358,7 +358,6 @@ void convert(char out[128])
 
 int caputure()
 {
-	strcpy(filename, argv[1]);
 	open_device();		//　ビデオバイスをオープン
 	init_device();		//　ビデオデバイスを初期化
 	start_capturing();	//　画像キャプチャ開始
