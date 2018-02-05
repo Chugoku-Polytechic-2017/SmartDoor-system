@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include "libraries/GPIOController.h"
+#include "libraries/capture.h"
+
 
 static gboolean on_push(GIOChannel *ch, gpointer d) {
     int *flag;
@@ -15,12 +17,17 @@ static gboolean on_push(GIOChannel *ch, gpointer d) {
     return TRUE;
 }
 
+
+
 int main(void){
+   char command[50] = "python2.7 ./facer.py -h";
     int status, flag = 0;
-    GMainLoop *loop;
+     GMainLoop *loop;
 
     status = caputure();
-
+    if(system(command)==-1){
+        printf("実行できませんでした\n");
+    }
     loop = g_main_loop_new(NULL, FALSE);
     status = pinMode(11, OUTPUT);
     at_gpio_add(13,  AT_GPIO_EDGE_FALLING, on_push, &flag,  NULL);
