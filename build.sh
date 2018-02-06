@@ -6,7 +6,7 @@ open ${ARMADILLO_ADDRESS}
 user ftp aaa
 cd pub
 put main.arm
-put facer.py
+put python/facer.py
 END
 }
 
