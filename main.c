@@ -8,20 +8,23 @@ gboolean LED = TRUE;
 gboolean callback(gpointer data)
 {
     int status = 0;
-    char command[50] = "python2.7 ./facer.py -h";
     printf("timer intterupt %d\n", human_sensor);
     //早期リターン
     if(human_sensor == FALSE) {
         return FALSE;
     }
 
+    caputure();
+    status = system("python2.7 ./facer.py detect face.jpg -d");
+    if(status == -1){
+         printf("検出または実行に失敗しました。\n");
+    }
+    status = system("python2.7 ./facer.py identify -j -d sample01");
+    if(status == -1){
+         printf("認証に失敗しました。\n");
+    }
     digitalWrite(11, LED);
     LED = !LED;
-    caputure();
-    status = system(command);
-    if(status == -1){
-         printf("実行できませんでした\n");
-    }
     return FALSE;
 }
 
@@ -37,20 +40,14 @@ static gboolean on_push(GIOChannel *ch, gpointer d) {
 }
 
 int main(void){
-   char command[50] = "python2.7 ./facer.py -h";
-    int status, flag = 0;
-     GMainLoop *loop;
-
-    status = caputure();
-    if(system(command)==-1){
-        printf("実行できませんでした\n");
-    }
+    int status;
+    GMainLoop *loop;
+ 
     loop = g_main_loop_new(NULL, FALSE);
     status = pinMode(11, OUTPUT);
-    at_gpio_add(13,  AT_GPIO_EDGE_FALLING, on_push, &flag,  NULL);
-    g_timeout_add_seconds(1, callback, NULL);
+    at_gpio_add(13,  AT_GPIO_EDGE_BOTH, on_push, NULL,  NULL);
     g_main_loop_run(loop);
     g_main_loop_unref(loop);
-
+ 
     return status;
 } 
