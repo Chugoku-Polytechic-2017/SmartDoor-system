@@ -13,7 +13,7 @@ gboolean callback(gpointer data)
     if(human_sensor == FALSE) {
         return FALSE;
     }
-
+    printf("starting capture\n");
     caputure();
     printf("starting face detect\n");
     status = system("python2.7 python/facer.py detect face.jpg -d");
