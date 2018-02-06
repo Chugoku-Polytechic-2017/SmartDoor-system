@@ -2,7 +2,18 @@
 #include "libraries/GPIOController.h"
 #include "libraries/capture.h"
 
-gboolean human_sensor = TRUE; 
+gboolean human_sensor = FALSE; 
+gboolean LED = TRUE; 
+
+gboolean callback(gpointer data)
+{
+    printf("timer intterupt %d\n", human_sensor);
+    if(human_sensor == TRUE) {
+        digitalWrite(11, LED);
+        LED = !LED;
+    }
+    return FALSE;
+}
 
 static gboolean on_push(GIOChannel *ch, gpointer d) {
     printf("on_push %d\r\n", human_sensor);
@@ -12,12 +23,6 @@ static gboolean on_push(GIOChannel *ch, gpointer d) {
     }
 
     g_io_channel_read_to_end(ch, NULL, NULL, NULL);
-    return TRUE;
-}
-
-gboolean callback(gpointer data)
-{
-    printf("timer intterupt\n");
     return TRUE;
 }
 
