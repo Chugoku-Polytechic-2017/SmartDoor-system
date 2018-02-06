@@ -2,8 +2,8 @@
 
 function ftp_transport () {
 ftp -n <<END
-open ${ARMADILLO_ADRESS}
-user ftp
+open ${ARMADILLO_ADDRESS}
+user ftp aaa
 cd pub
 put main.arm
 put facer.py
