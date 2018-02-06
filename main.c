@@ -2,6 +2,7 @@
 #include "libraries/GPIOController.h"
 #include "libraries/capture.h"
 
+gboolean human_sensor = TRUE; 
 
 static gboolean on_push(GIOChannel *ch, gpointer d) {
     int *flag;
