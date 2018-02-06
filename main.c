@@ -6,12 +6,10 @@ gboolean human_sensor = TRUE;
 
 static gboolean on_push(GIOChannel *ch, gpointer d) {
     printf("on_push %d\r\n", human_sensor);
-    if (human_sensor == TRUE) {
-        digitalWrite(11, HIGH);
-    } else {
-        digitalWrite(11, LOW);
-    }
     human_sensor = !human_sensor;
+    if (human_sensor == TRUE) {
+        g_timeout_add_seconds(3, callback, NULL);
+    }
 
     g_io_channel_read_to_end(ch, NULL, NULL, NULL);
     return TRUE;
