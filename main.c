@@ -15,11 +15,13 @@ gboolean callback(gpointer data)
     }
 
     caputure();
-    status = system("python2.7 ./facer.py detect face.jpg -d");
+    printf("starting face detect\n");
+    status = system("python2.7 python/facer.py detect face.jpg -d");
     if(status == -1){
          printf("検出または実行に失敗しました。\n");
     }
-    status = system("python2.7 ./facer.py identify -j -d sample01");
+    printf("starting face identify\n");
+    status = system("python2.7 python/facer.py identify -j -d sample01");
     if(status == -1){
          printf("認証に失敗しました。\n");
     }
