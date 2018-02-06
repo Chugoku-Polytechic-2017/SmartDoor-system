@@ -1,3 +1,7 @@
+#ifndef __GPIO_CONTROLLER_H__
+#define __GPIO_CONTROLLER_H__
+
+#include "atgpio.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -5,14 +9,15 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <glib.h>
 
-#define OUTPUT 1
-#define INPUT 0
+#define OUTPUT 0
+#define INPUT 1
 #define HIGH 1
 #define LOW 0
 
-extern int pinMode(char *pin, int mode);
-extern int digitalWrite(char *path, int isON);
+int pinMode(int pin, int isIN);
+int digitalWrite(int pin, int isON);
+int digitalRead(int pin);
 
-//int digitalWrite(char *path, int isON);
-
+#endif /* __GPIO_CONTROLLER_H__ */

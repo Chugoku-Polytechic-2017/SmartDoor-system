@@ -10,7 +10,6 @@ from . import face_list
 from . import person
 from . import person_group
 from . import util
-from . import test 
 from .util import CognitiveFaceException
 from .util import Key
 from .util import BaseUrl
