@@ -7,6 +7,9 @@ import json
 import os
 
 def command_detect(args, CF):
+    # rmove old request.json
+    if os.path.exists('request.json'):
+        os.remove('request.json')
     result = CF.face.detect(args.image)
     if args.debug:
         print(json.dumps(result))
