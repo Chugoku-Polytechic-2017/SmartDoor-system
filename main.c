@@ -7,10 +7,20 @@ gboolean LED = TRUE;
 
 gboolean callback(gpointer data)
 {
+    int status = 0;
+    char command[50] = "python2.7 ./facer.py -h";
     printf("timer intterupt %d\n", human_sensor);
-    if(human_sensor == TRUE) {
-        digitalWrite(11, LED);
-        LED = !LED;
+    //早期リターン
+    if(human_sensor == FALSE) {
+        return FALSE;
+    }
+
+    digitalWrite(11, LED);
+    LED = !LED;
+    caputure();
+    status = system(command);
+    if(status == -1){
+         printf("実行できませんでした\n");
     }
     return FALSE;
 }
