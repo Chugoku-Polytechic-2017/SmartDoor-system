@@ -7,9 +7,9 @@ import json
 import os
 
 def command_detect(args, CF):
-    # rmove old request.json
-    if os.path.exists('request.json'):
-        os.remove('request.json')
+    # rmove old ../request.json
+    if os.path.exists('../request.json'):
+        os.remove('../request.json')
     result = CF.face.detect(args.image)
     if args.debug:
         print(json.dumps(result))
@@ -18,13 +18,13 @@ def command_detect(args, CF):
         sys.exit(-1)
     face_ids = map(lambda dic: dic['faceId'], result)
     request = str(json.dumps(face_ids))
-    f = open('request.json', 'w')
+    f = open('../request.json', 'w')
     f.write(request)
 
 
 def command_identify(args, CF):
     if args.json:
-        f = open('request.json', 'r')
+        f = open('../request.json', 'r')
         face_ids = json.load(f)
         result = CF.face.identify(face_ids, args.group_id)
     else:
