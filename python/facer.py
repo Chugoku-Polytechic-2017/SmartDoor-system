@@ -33,6 +33,28 @@ def command_identify(args, CF):
     if len(filter(lambda result: len(result) != 0, candidates)) == 0:
         sys.exit(-1)
 
+#速度向上のために、検出→認証を一つの関数にしたもの
+def command_authenticate(args, CF):
+    #face detct 
+    detect_result = CF.face.detect('./face.jpg')
+    face_ids = map(lambda dic: dic['faceId'], detect_result)
+    if args.debug:
+        print(json.dumps(face_ids))
+    
+    if len(face_ids) == 0:
+        sys.exit(2)
+
+    #face identify
+    identify_result = CF.face.identify(face_ids, args.group_id)
+    candidates = map(lambda face: face['candidates'], identify_result)
+    if len(\
+            filter(lambda identify_result: \
+            len(identify_result) != 0, candidates)\
+       ) == 0:
+        sys.exit(3)
+    if args.debug:
+        print(json.dumps(candidates))
+
 if __name__ == '__main__':
     #set up FaceAPI SDK
     KEY = os.getenv("FACEAPIKEY")
@@ -69,6 +91,15 @@ if __name__ == '__main__':
         default=False, \
         help='debug mode if this flag is set print json. (default: False)')
     face_identify.set_defaults(handler=command_identify)
+
+    # create a parser of authenticate command 
+    authenticate = subparsers.add_parser('authenticate', help='see `authenticate -h`')
+    authenticate.add_argument('group_id', help = 'please set a person group_id.')
+    authenticate.add_argument('-d', '--debug', \
+        action='store_true', \
+        default=False, \
+        help='debug mode if this flag is set print json. (default: False)')
+    authenticate.set_defaults(handler=command_authenticate)
 
     args = parser.parse_args()
     if hasattr(args, 'handler'):
