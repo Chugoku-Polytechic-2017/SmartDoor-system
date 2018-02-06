@@ -16,14 +16,16 @@ gboolean callback(gpointer data)
     printf("starting capture\n");
     caputure();
     printf("starting face detect\n");
-    status = system("python2.7 python/facer.py detect face.jpg -d");
-    if(status == -1){
-         printf("検出または実行に失敗しました。\n");
-    }
-    printf("starting face identify\n");
-    status = system("python2.7 python/facer.py identify -j -d sample01");
-    if(status == -1){
-         printf("認証に失敗しました。\n");
+    status = system("python2.7 python/facer.py authenticate -d sample01");
+    switch(status) {
+        case 2:
+            printf("検出に失敗しました。\n");
+            return FALSE;
+        case 3:
+            printf("認証できませんでした。\n");
+            return FALSE;
+        default:
+            break;
     }
     digitalWrite(11, LED);
     LED = !LED;
