@@ -18,6 +18,9 @@
 #include <asm/types.h>          /* for videodev2.h */
 #include <linux/videodev2.h>
 #include <jpeglib.h>
+#include <netinet/ip.h>
+#include <signal.h>
+#include <netdb.h>
 
 int capture();
 

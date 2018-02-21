@@ -23,19 +23,84 @@ static void init_device(void);
 static void close_device(void);
 static void open_device(void);
 void convert(char out[128]);
+static void send_udp();
 
-struct buffer {
+typedef struct {
 	void 	*start;
 	size_t   	length;
-};
+} buffer;
 
 static char *dev_name	= "/dev/video0";	// ビデオデバイス名
 static int  fd	 	= -1;			// ビデオデバイスのハンドラ
-struct buffer *buffers	= NULL;			// バッファへの先頭アドレス
+buffer *buffers	= NULL;			// バッファへの先頭アドレス
 static unsigned int n_buffers = 0;		// バッファ数
 static char output_file[128] = "sample.yuv";			// 出力ファイル
 static char filename[128] = "face.jpg";
 
+char *host = "10.1.69.81";;	 // 接続先IPアドレス
+int sendport = 55555;	   // 接続先ポート番号
+
+int ore_connect( char *host, int sendport )
+{
+	int sd;					// 待ち受けソケット
+	struct addrinfo hints;	// bind用ヒント
+	struct addrinfo *ai;	// bind用アドレス情報
+	char sendportstr[16];
+	int result;
+
+	// 接続先の情報を設定
+	memset(&hints,0,sizeof(hints));
+	hints.ai_flags	   = AI_ADDRCONFIG;
+	hints.ai_family	  = AF_UNSPEC;   // IPv6/IPv4 両方
+	hints.ai_socktype	= SOCK_DGRAM;  // UDP です
+	snprintf( sendportstr, sizeof(sendportstr), "%d", sendport );   // 待ち受けポート番号を文字列にする
+	result = getaddrinfo( host, sendportstr, &hints, &ai );
+	if( result!=0 ){
+		fprintf( stderr,"getaddrinfo: %s\n", gai_strerror(result) );
+		return -1;
+	}
+
+	// 接続用ソケット作成
+	sd = socket( ai->ai_family, ai->ai_socktype, ai->ai_protocol );
+	if( sd<0 ){
+		perror("socket");
+		freeaddrinfo(ai);
+		return -1;
+	}
+
+	// 接続開始
+	result = connect(sd, ai->ai_addr, ai->ai_addrlen);
+	if( result<0 ){
+		perror("connect");
+		close(sd);
+		freeaddrinfo(ai);
+		return -1;
+	}
+	
+	freeaddrinfo(ai);
+	return sd;
+}
+
+static void send_udp(const void *p)	
+{
+	int sd;
+	int i=0;
+	
+	signal(SIGPIPE, SIG_IGN);   // PIPE切断シグナルを無視する
+	sd = ore_connect( host, sendport );
+
+	while(1){	
+		write( sd, p, 1472 );
+		usleep(20);
+		p += 1472;
+		if(i==103){
+			write( sd, p, 512 );
+			break;
+		}
+		i++;
+	}
+	close(sd);
+}
 
 static void errno_exit(const char *s)
 {
@@ -70,6 +135,7 @@ static void process_image(const void *p)
 }
 
 
+
 static int read_frame(void)
 {
 	struct v4l2_buffer buf;
@@ -88,6 +154,7 @@ static int read_frame(void)
 	}
 	assert(buf.index < n_buffers);
 	process_image(buffers[buf.index].start); // フレームを処理
+	send_udp(buffers[buf.index].start);
 	xioctl(fd, VIDIOC_QBUF, &buf);	   // 使用したバッファをincoming queueに入れる
 
 	return 1;
@@ -188,7 +255,7 @@ static void init_mmap(void)
 		xioctl(fd, VIDIOC_QUERYBUF, &buf);
 
 		buffers[n_buffers].length = buf.length;
-		//　デバイスメモリとアプリケーションのメモリをマッピング（共有）			
+		//　デバイスメモリとアプリケーションのメモリをマッピング（共有）
 		buffers[n_buffers].start = mmap(NULL,	// start anywhere
 			buf.length,							// バッファの長さ
 			PROT_READ | PROT_WRITE,				// メモリ保護を指定
@@ -356,8 +423,14 @@ void convert(char out[128])
 }
 
 
-int caputure()
+void caputure()
 {
+	struct v4l2_buffer buf;
+
+	CLEAR (buf);
+	buf.type 	 = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	buf.memory    = V4L2_MEMORY_MMAP;
+
 	open_device();		//　ビデオバイスをオープン
 	init_device();		//　ビデオデバイスを初期化
 	start_capturing();	//　画像キャプチャ開始
@@ -366,5 +439,4 @@ int caputure()
 	uninit_device();	//　初期化前の状態に戻す
 	close_device();		//　ビデオデバイスをクローズ
 	system("rm -rf sample.yuv");
-	return 0;
 }
