@@ -102,10 +102,17 @@ static gboolean interrupt_pyroelectric_sensor(GIOChannel *ch, gpointer d) {
 int main(void){
     int status;
     GMainLoop *loop;
+    human_sensor sensor;
+    sensor.is_authenticate = FALSE;
+    sensor.LED = TRUE;
  
     loop = g_main_loop_new(NULL, FALSE);
     status = pinMode(11, OUTPUT);
-    at_gpio_add(13,  AT_GPIO_EDGE_BOTH, on_push, NULL,  NULL);
+    status = pinMode(13, INPUT);
+    digitalWrite(11, 0);
+    sensor.sensor = digitalRead(13);
+    at_gpio_add(13,  AT_GPIO_EDGE_BOTH, interrupt_human_sensor, &sensor,  NULL);
+    at_gpio_add(15,  AT_GPIO_EDGE_BOTH, interrupt_pyroelectric_sensor, &sensor,  NULL);
     g_main_loop_run(loop);
     g_main_loop_unref(loop);
  
