@@ -1,5 +1,13 @@
 #include "GPIOController.h"
 
+void delay(unsigned int howLong)
+{
+    struct timespec req;
+    req.tv_sec  = 0;
+    req.tv_nsec = howLong * 1000000;
+    nanosleep(&req, NULL);
+}
+
 int pinMode(int pin, int isIN){
     int fd, status;
     GString *direction;

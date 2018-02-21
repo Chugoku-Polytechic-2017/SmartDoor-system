@@ -16,6 +16,7 @@
 #define HIGH 1
 #define LOW 0
 
+void delay(unsigned int howLong);
 int pinMode(int pin, int isIN);
 int digitalWrite(int pin, int isON);
 int digitalRead(int pin);
