@@ -57,8 +57,11 @@ static gboolean interrupt_human_sensor(GIOChannel *ch, gpointer d) {
     //チャタリング除去
     delay(10);
     sensor->sensor = digitalRead(13);
+    digitalWrite(16, HIGH);
     //センサーがHighまたは、認証中だったら早期リターン
     if(sensor->sensor == TRUE || sensor->is_authenticate == TRUE) {
+        if (sensor->sensor == TRUE)
+            digitalWrite(16, LOW);
         g_io_channel_read_to_end(ch, NULL, NULL, NULL);
         return TRUE;
     }
@@ -88,11 +91,13 @@ static gboolean interrupt_pyroelectric_sensor(GIOChannel *ch, gpointer d) {
         digitalWrite(11, HIGH);
         delay(90);
         digitalWrite(11, LOW);
+        digitalWrite(16, LOW);
     }
     //人感センサーが反応している状態
     //外から中へ入る場合
     else if (sensor->sensor == FALSE) {
         digitalWrite(11, LOW);
+        digitalWrite(16, LOW);
         printf("外から中へ\n");
     }
     g_io_channel_read_to_end(ch, NULL, NULL, NULL);
@@ -109,7 +114,9 @@ int main(void){
     loop = g_main_loop_new(NULL, FALSE);
     status = pinMode(11, OUTPUT);
     status = pinMode(13, INPUT);
+    status = pinMode(16, OUTPUT);
     digitalWrite(11, 0);
+    digitalWrite(16, LOW);
     sensor.sensor = digitalRead(13);
     at_gpio_add(13,  AT_GPIO_EDGE_BOTH, interrupt_human_sensor, &sensor,  NULL);
     at_gpio_add(15,  AT_GPIO_EDGE_BOTH, interrupt_pyroelectric_sensor, &sensor,  NULL);
