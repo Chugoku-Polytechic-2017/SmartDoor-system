@@ -2,7 +2,6 @@
 #include "libraries/GPIOController.h"
 #include "libraries/capture.h"
 
-
 //FALSE = 人がいる
 //TRUE = 人がいない
 
@@ -10,7 +9,6 @@
 typedef struct human_sensor_struct {
     gboolean sensor;
     gboolean is_authenticate; 
-    gboolean LED; 
     guint timeout;
 } human_sensor;
 
@@ -20,14 +18,14 @@ gboolean face_authenticate(gpointer data)
     int status = 0;
     delay(20);
     sensor->sensor = digitalRead(13);
-    printf("timer intterupt %d\n", sensor->sensor);
+    //printf("timer intterupt %d\n", sensor->sensor);
     //早期リターン
     if(sensor->sensor == TRUE) {
         sensor->is_authenticate = FALSE;
         return FALSE;
     }
 
-    printf("starting capture\n");
+    printf("撮影開始\n");
     caputure();
     printf("starting face detect\n");
     status = system("python2.7 python/facer.py authenticate -d sample01");
@@ -40,13 +38,12 @@ gboolean face_authenticate(gpointer data)
             return FALSE;
         case 768:
             sensor->is_authenticate = FALSE;
-            printf("認証できませんでした。\n");
+            printf("顔情報を照合できませんでした。\n");
             return FALSE;
         default:
             break;
     }
-    digitalWrite(11, sensor->LED);
-    sensor->LED = !sensor->LED;
+    digitalWrite(11, HIGH);
     sensor->is_authenticate = FALSE;
     return FALSE;
 }
@@ -69,7 +66,7 @@ static gboolean interrupt_human_sensor(GIOChannel *ch, gpointer d) {
     //センサーが反応して、認証中でない場合
     if(sensor->sensor == FALSE && sensor->is_authenticate == FALSE) {
         sensor->is_authenticate = TRUE;
-        printf("calling face_authenticate function\n");
+        //printf("calling face_authenticate function\n");
         sensor->timeout = g_timeout_add_seconds(3, face_authenticate, sensor);
     }
     g_io_channel_read_to_end(ch, NULL, NULL, NULL);
@@ -77,7 +74,7 @@ static gboolean interrupt_human_sensor(GIOChannel *ch, gpointer d) {
 }
 
 static gboolean interrupt_pyroelectric_sensor(GIOChannel *ch, gpointer d) {
-    printf("interrupt_pyroelectric_sensor\n");
+    printf("\n");
     human_sensor *sensor = (human_sensor *)d;
     sensor->sensor = digitalRead(13);
     if(digitalRead(15) != HIGH) {
@@ -109,7 +106,6 @@ int main(void){
     GMainLoop *loop;
     human_sensor sensor;
     sensor.is_authenticate = FALSE;
-    sensor.LED = TRUE;
  
     loop = g_main_loop_new(NULL, FALSE);
     status = pinMode(11, OUTPUT);
